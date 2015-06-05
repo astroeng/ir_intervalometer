@@ -29,9 +29,7 @@ const static char stateNames[][20] = {{"Receive"},
                                       {"Reset"}};
 
 // Debug enable or disable */
-#define debug_println(x)   //Serial.println(x)
-#define debug_print_hex(x) //Serial.print(x,HEX)
-#define debug_print(x)     //Serial.print(x)
+#define DEBUG_LINE(x) //x
 
 #define IR_SHUTTER  0xB4B8F
 #define IR_INTERVAL 40
@@ -148,12 +146,12 @@ void loop()
     
       if (irrecv.decode(&results)) 
       {
-        debug_println("--- NEW CYCLE ---");
-        debug_print_hex(results.value);
-        debug_print(", ");
-        debug_print_hex(results.decode_type);
-        debug_print(", ");
-        debug_println(results.bits);
+        DEBUG_LINE(Serial.println("--- NEW CYCLE ---"));
+        DEBUG_LINE(Serial.print(results.value,HEX));
+        DEBUG_LINE(Serial.print(", "));
+        DEBUG_LINE(Serial.print(results.decode_type,HEX));
+        DEBUG_LINE(Serial.print(", "));
+        DEBUG_LINE(Serial.println(results.bits));
       
         if (results.decode_type == SONY)
         {
@@ -170,9 +168,9 @@ void loop()
       {
         nextState(IMAGE_START);
         
-        debug_print("Wait - ");
-        debug_print(WAIT_DURATION);
-        debug_println("ms");
+        DEBUG_LINE(Serial.print("Wait - "));
+        DEBUG_LINE(Serial.print(WAIT_DURATION));
+        DEBUG_LINE(Serial.println("ms"));
       }
       
       break;
@@ -195,9 +193,9 @@ void loop()
         nextState(RESET);
       }
       
-      debug_print("Image Start - ");
-      debug_print_hex(sendValue);
-      debug_println();
+      DEBUG_LINE(Serial.print("Image Start - "));
+      DEBUG_LINE(Serial.print(sendValue,HEX));
+      DEBUG_LINE(Serial.println());
       
       break;
     
@@ -209,16 +207,16 @@ void loop()
       if (transitionTime + imageDuration < currentTime)
       {
         nextState(IMAGE_END);
-        debug_println("Image Time"); 
+        DEBUG_LINE(Serial.println("Image Time")); 
       }
       
       if (((currentTime - transitionTime) % 30000) == 0)
       {
-        debug_print(imageCount);
-        debug_print(" : ");
-        debug_print(imageDuration);
-        debug_print(" : ");
-        debug_println(currentTime - transitionTime);
+        DEBUG_LINE(Serial.print(imageCount));
+        DEBUG_LINE(Serial.print(" : "));
+        DEBUG_LINE(Serial.print(imageDuration));
+        DEBUG_LINE(Serial.print(" : "));
+        DEBUG_LINE(Serial.println(currentTime - transitionTime));
       }
       
       break;
@@ -228,9 +226,9 @@ void loop()
       sendMessage(sendValue, 20);
       nextState(WAIT);
       
-      debug_print("Image End - ");
-      debug_print_hex(sendValue);
-      debug_println();
+      DEBUG_LINE(Serial.print("Image End - "));
+      DEBUG_LINE(Serial.print(sendValue,HEX));
+      DEBUG_LINE(Serial.println());
       
       break;
 
@@ -239,9 +237,9 @@ void loop()
       sendMessage(sendValue, 20);
       nextState(RESET);
       
-      debug_print("Image Abort - ");
-      debug_print_hex(sendValue);
-      debug_println();
+      DEBUG_LINE(Serial.print("Image Abort - "));
+      DEBUG_LINE(Serial.print(sendValue,HEX));
+      DEBUG_LINE(Serial.println());
       
       break;
     
@@ -321,8 +319,9 @@ void serialEvent()
     }
     else
     {
-      debug_print("Clearing Bytes - ");
-      debug_println(Serial.available());
+      DEBUG_LINE(Serial.print("Clearing Bytes - "));
+      DEBUG_LINE(Serial.println(Serial.available()));
+      
       Serial.readBytes(readValue,Serial.available());
     }
   }
